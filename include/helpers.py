@@ -1,4 +1,7 @@
+import time
 from datetime import datetime as dt
+
+from stealth import *
 
 def find_tiles(tile_types, center_x, center_y, radius):
     """Find every tile(s) around the player in a determined
@@ -36,8 +39,8 @@ def find_tiles(tile_types, center_x, center_y, radius):
 
     return tiles_coords
 
-def check_overload():
-    """"Return True if character is over MaxWeigth - 50, otherwise
+def check_overweight():
+    """"Return True if character is over MaxWeigth - 75, otherwise
     returns False.
 
     Returns
@@ -45,7 +48,7 @@ def check_overload():
     Boolean
         True if overweight, False otherwise.
     """
-    if Weight() > MaxWeight() - 50:
+    if Weight() > MaxWeight() - 75:
         return True
     else:
         return False
@@ -58,12 +61,7 @@ def runebook_recall(runebook, rune_position):
     runebook : Serial
     rune_position : Integer
     """
-    RUNE_RECALL_POSITIONS = [ 
-                            5, 11, 17, 23,
-                            29, 35, 41, 47,
-                            53, 59, 65, 71,
-                            77, 83, 89, 95
-                        ]
+    RUNE_RECALL_POSITIONS = [5+(x*6) for x in range(0,16)]
     MAX_ATTEMPTS = 3
     BAD_MSG = 'That location is blocked.'
     
@@ -113,12 +111,4 @@ def runebook_recall(runebook, rune_position):
             status = True
     
     return status
-
-    
-
-
-
-
-
-
         
