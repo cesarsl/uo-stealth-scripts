@@ -14,6 +14,7 @@ class Lumberjacking:
         self.axe_types = []
         self.tree_tiles = []
         self.resource_types = []
+        self.trees = []
         self.tree_map = []
         self.current_axe = None
         self.current_tree = None
@@ -72,6 +73,9 @@ class Lumberjacking:
         else:
             raise Exception('No axes in the backpack')
     
+    def get_tree_name(self):
+        tree_name = [x['name'] for x in self.trees if x['tile'] == str(self.current_tree['tile'])][0]
+        return tree_name
 
     def find_trees(self, radius=8):
         char_x = GetX(Self())

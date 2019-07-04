@@ -51,8 +51,8 @@ class AutoLumber:
                 self.lumberjacking.find_trees()
                 self.current_tree = self.lumberjacking.next_tree()
             
-            if self.current_tree:
-                print(f"Going to the tree at {self.current_tree['x']}, {self.current_tree['y']}")
+            if self.current_tree:                
+                print(f"Going to {self.lumberjacking.get_tree_name()} at {self.current_tree['x']}, {self.current_tree['y']}")
                 newMoveXY(self.current_tree['x'], self.current_tree['y'], 
                         True, 1, True)
                 
@@ -83,11 +83,12 @@ class AutoLumber:
                     chopping = self.lumberjacking.chop()
                 
                 self.current_tree = self.lumberjacking.next_tree()
-            else:
-                if self.current_rune < 16:
-                    self.current_rune += 1
-                else:
-                    self.current_rune = 0
+                
+                if self.current_tree == False:
+                    if self.current_rune < 16:
+                        self.current_rune += 1
+                    else:
+                        self.current_rune = 0                
     
     def __get_obj_id(self):
         ClientRequestObjectTarget()
@@ -103,11 +104,7 @@ class AutoLumber:
         
         try:
             with open(json_path, 'r') as json_config:
-                check_file = json_config.readlines()
-                if check_file:
-                    config = json.load(json_config)
-                else:
-                    raise FileNotFoundError('empty file')
+                config = json.load(json_config)
             
             self.deposit_box = config['deposit_box']
             self.home_runebook = Runebook(config['home_runebook'])
@@ -142,10 +139,6 @@ class AutoLumber:
                 json.dump(save_config, json_config)
 
             pass
-        
-        # self.home_runebook = Runebook(0x4128FE00)
-        # self.home_rune = 1
-        # self.tree_runebook = Runebook(0x45295BB4)
         return
     
     def __check_backpack_items(self):
