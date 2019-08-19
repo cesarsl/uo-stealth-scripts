@@ -46,20 +46,58 @@ class Char:
 
 class MyChar(Char):
     def __init__(self):
-        self._armor: int = stealth.Armor()
-        self._backpack: int = stealth.Backpack()
-        self._name: str = stealth.CharName()
-        self._title: str = stealth.CharTitle()
-        self._resist["cold"]: int = stealth.ColdResist()
+        self._armor: int = None
+        self._backpack: int = None
+        self._name: str = None
+        self._title: str = None
+        self._resist["cold"]: int = None
+        self._resist["energy"]: int = None
+        self._resist["fire"]: int = None
+        self._resist["poison"]: int = None
         self._connected_time: str = stealth.ConnectedTime()
         self._dead: bool = stealth.Dead()
         self._ability["dex"]: int = stealth.Dex()
         self._disconnected_time: str = stealth.DisconnectedTime()
         self._resist["energy"]: str = stealth.EnergyResist()
-        self._extended_info: Type["TExtendedInfo"] = stealth.ExtendedInfo()
+        self._extended_info: Dict[str, str] = stealth.GetExtInfo()
 
     @property
     def armor(self):
         logging.info(f"Getting armor value")
+        self._armor = stealth.Armor()
         return self._armor
 
+    @property
+    def backpack(self):
+        logging.info(f"Getting backpack id")
+        self._backpack = stealth.Backpack()
+        return self._backpack
+
+    @property
+    def name(self):
+        logging.info(f"Getting character name")
+        self._name = stealth.CharName()
+        return self._name
+
+    @property
+    def title(self):
+        logging.info(f"Getting character title")
+        self._title = stealth.CharTitle()
+
+    @property
+    def resist(self, prop=None):
+        logging.info(f"Getting character resistance for {prop}")
+        if prop:
+            if prop == "cold":
+                self._resist[prop] = stealth.ColdResist()
+            elif prop == "energy":
+                self._resist[prop] = stealth.EnergyResist()
+            elif prop == "fire":
+                self._resist[prop] = stealth.FireResist()
+            elif prop == "poison":
+                self._resist[prop] = stealth.PoisonResist()
+            else:
+                logging.info(f"Not a valid resistance option")
+            return self._resist[prop]
+        logging.info(f"Try passing cold, energy, fire or poison as a parameter")
+        return None

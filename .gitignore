@@ -1,2 +1,14 @@
 .vscode/
 .python-version
+Scripts/
+Stealth.exe
+Script.dll
+StealthUtils.exe
+client_dll.dll
+client_dll_x64.dll
+hotkeys.py
+libeay32.dll
+py_stealth/
+ssleay32.dll
+stealth.py
+stealth_script.pas
