@@ -40,14 +40,14 @@ class MyChar(Char):
         logging.info(f"Getting character ability value for {prop}")
         if prop:
             if prop == "dex":
-                self._resist[prop] = stealth.ColdResist()
+                self._ability[prop] = stealth.Dex()
             elif prop == "int":
-                self._resist[prop] = stealth.EnergyResist()
+                self._ability[prop] = stealth.Int()
             elif prop == "str":
-                self._resist[prop] = stealth.FireResist()
+                self._ability[prop] = stealth.Str()
             else:
                 logging.info(f"Not a valid ability option")
-            return self._resist[prop]
+            return self._ability[prop]
         logging.info(f"Try passing dex, int or str as a parameter")
         return None
 
@@ -68,7 +68,7 @@ class MyChar(Char):
         logging.info(f"Getting connected time")
         self._connected_time = stealth.ConnectedTime()
         return self._connected_time
-    
+
     @property
     def dead(self) -> bool:
         logging.info(f"Getting dead property")
