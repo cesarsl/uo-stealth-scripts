@@ -8,12 +8,15 @@ import stealth
 class Char:
     def __init__(self):
         self._ability: Dict[str, int] = {}
+        self._damage: Dict[str, int] = {}
         self._dead: bool = None
         self._name: str = None
-        self._position: Dict[str, int]
+        self._position: Dict[str, int] = {}
+        self._race: str = None
         self._resist: Dict[str, int] = {}
         self._skills: Dict[str, int] = {}
         self._stats: Dict[str, int] = {}
+        self._weight: Dict[str, int] = {}
 
 
 class MyChar(Char):
@@ -25,15 +28,40 @@ class MyChar(Char):
         self._armor: int = None
         self._backpack: int = None
         self._connected_time: str = ""
+        self._damage["max"]: int = None
+        self._damage["min"]: int = None
         self._dead: bool = None
         self._disconnected_time: str = ""
         self._extended_info: Dict[str, str] = {}
+        self._luck: int = None
         self._name: str = None
         self._title: str = None
         self._resist["cold"]: int = None
         self._resist["energy"]: int = None
         self._resist["fire"]: int = None
         self._resist["poison"]: int = None
+        self._stats["hp_current"]: int = None
+        self._stats["hp_max"]: int = None
+        self._stats["mp_current"]: int = None
+        self._stats["mp_max"]: int = None
+        self._stats["st_current"]: int = None
+        self._stats["st_max"]: int = None
+        self._stats["hci"]: int = None
+        self._stats["ssi"]: int = None
+        self._stats["di"]: int = None
+        self._stats["lrc"]: int = None
+        self._stats["dci"]: int = None
+        self._stats["sdi"]: int = None
+        self._stats["fcr"]: int = None
+        self._stats["fc"]: int = None
+        self._stats["lmc"]: int = None
+        self._stats["hp_regen"]: int = None
+        self._stats["mp_regen"]: int = None
+        self._stats["st_regen"]: int = None
+        self._stats["reflect_damage"]: int = None
+        self._tithing_points: int = None
+        self._weight["current"]: int = None
+        self._weight["max"]: int = None
 
     @property
     def ability(self, prop=None) -> int:
