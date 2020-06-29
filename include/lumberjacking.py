@@ -24,8 +24,7 @@ class Lumberjacking:
 
 
     def __load_resources(self):
-        curr_path = os.path.dirname(__file__)
-        json_path = curr_path + '\\json\\lumberjacking.json'
+        json_path = os.path.realpath("./../scripts/assets/json/lumberjacking.json")
         with open(json_path, 'r') as file:
             data = json.load(file)
 

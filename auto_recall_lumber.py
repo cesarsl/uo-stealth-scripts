@@ -99,8 +99,7 @@ class AutoLumber:
 
     
     def __setup(self):
-        curr_path = os.path.dirname(__file__)
-        json_path = curr_path + '\\cache\\lumberjacking.json'
+        json_path = os.path.realpath("./../cache/lumberjacking.json")
         
         try:
             with open(json_path, 'r') as json_config:
@@ -111,7 +110,7 @@ class AutoLumber:
             self.home_rune = config['home_rune']
             self.tree_runebook = Runebook(config['tree_runebook'])
             pass
-        except FileNotFoundError as error:
+        except OSError as error:
             print(f'Error: {error}')
             ClientPrint('Select your deposit box, where resources taken from trees'
                     + ' will be stored:')
@@ -153,7 +152,7 @@ class AutoLumber:
 
     def __deposit_resources(self):
         for item in self.resources_found:
-            MoveItem(item, 0, 0x41EC42BB, 0, 0, 0)
+            MoveItem(item, 0, self.deposit_box.get('ID'), 0, 0, 0)
             Wait(self.LAG_FAILSAFE)
         return True
     
