@@ -2,23 +2,23 @@
     "axes": [
         {
             "name": "hatchet",
-            "type": "0x0F43"
+            "type": "0xF43"
         },
         {
             "name": "executioner's axe",
-            "type": "0x0F45"
+            "type": "0xF45"
         },
         {
             "name": "battle axe",
-            "type": "0x0F47"
+            "type": "0xF47"
         },
         {
             "name": "axe",
-            "type": "0x0F49"
+            "type": "0xF49"
         },
         {
             "name": "double axe",
-            "type": "0x0F4B"
+            "type": "0xF4B"
         },
         {
             "name": "war axe",

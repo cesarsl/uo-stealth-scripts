@@ -1,6 +1,8 @@
 import datetime as dt
 
-from stealth import *
+from stealth import ClientRequestObjectTarget, ClientTargetResponsePresent, \
+                    ClientTargetResponse, Wait, GetTooltip, GetGumpTextLines, \
+                    GetX, GetY, Self, WaitGump, WaitJournalLine, FoundedParamID
 
 from include.gumps import Gumps
 

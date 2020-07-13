@@ -6,20 +6,21 @@ from stealth import *
 
 from include.runebook import Runebook
 from include.lumberjacking import Lumberjacking
-from include.helpers import check_overweight
+from include.helpers import is_overweight
 
 class AutoLumber:
 
     def __init__(self):
         self.LAG_FAILSAFE = 700
         self.start_pos = { 'x': GetX(Self()), 'y': GetY(Self()) }
-        self.overweight = check_overweight()
+        self.overweight = is_overweight()
         self.lumberjacking = Lumberjacking()
         self.deposit_box = None
         self.home_runebook = None
         self.home_rune = None
         self.tree_runebook = None
         self.current_rune = None
+        self.last_rune = None
         self.current_tree = None
         self.resources_found = None
         self.status = False
@@ -30,9 +31,7 @@ class AutoLumber:
         print('Starting Auto Lumber Recall.')
         while self.status is True:
             if self.overweight is True:
-                can_convert = self.lumberjacking.convert_logs()
-                
-                if can_convert is False:
+                if self.lumberjacking.can_convert_logs() is False:
                     can_remove = self.__check_backpack_items()
 
                     if can_remove is True:
@@ -41,11 +40,14 @@ class AutoLumber:
                         raise Exception('You\'re overcrumbed. Remove some'
                                 + ' weight and try again.')
                 
-            if not self.current_rune:
+            if not self.current_rune and not self.last_rune:
+                self.last_rune = 0
                 self.current_rune = 1
-           
-            print(f'Current rune number is {self.current_rune}')
-            self.tree_runebook.travel(self.current_rune)
+
+            if self.last_rune != self.current_rune:           
+                print(f'Current rune number is {self.current_rune}')
+                self.last_rune = self.current_rune
+                self.tree_runebook.travel(self.current_rune)
             
             if not self.current_tree:
                 self.lumberjacking.find_trees()
@@ -59,13 +61,15 @@ class AutoLumber:
                 chopping = True
                 
                 while chopping:
-                    self.overweight = check_overweight()
+                    self.overweight = is_overweight()
                 
                     if self.overweight is True:
-                        print(f'Excess weight. Trying to transform logs into boards.')
-                        can_convert = self.lumberjacking.convert_logs()
-                        self.overweight = check_overweight()
-                        if can_convert is False or self.overweight is True:
+                        if self.lumberjacking.can_convert_logs():
+                            print(f'Excess weight. Trying to transform logs into boards.')
+                            self.lumberjacking.convert_logs()
+                            self.overweight = is_overweight()
+                        
+                        if self.overweight is True:
                             print(f'Can\'t transform any more logs in boards. Going to storage.')
                             self.__recall_home()
                             
@@ -77,8 +81,6 @@ class AutoLumber:
                                     + f"{self.current_tree['y']}")
                             newMoveXY(self.current_tree['x'], 
                                     self.current_tree['y'], True, 1, True)
-                    
-                    self.overweight = check_overweight()
 
                     chopping = self.lumberjacking.chop()
                 
@@ -86,9 +88,13 @@ class AutoLumber:
                 
                 if self.current_tree == False:
                     if self.current_rune < 16:
-                        self.current_rune += 1
+                            self.current_rune += 1
                     else:
-                        self.current_rune = 0                
+                        self.last_rune = 1
+                        self.current_rune = 1 
+                else:
+                    self.last_rune = self.current_rune
+
     
     def __get_obj_id(self):
         ClientRequestObjectTarget()
@@ -100,7 +106,7 @@ class AutoLumber:
     
     def __setup(self):
         json_path = os.path.realpath("./../cache/lumberjacking.json")
-        
+
         try:
             with open(json_path, 'r') as json_config:
                 config = json.load(json_config)
@@ -111,7 +117,7 @@ class AutoLumber:
             self.tree_runebook = Runebook(config['tree_runebook'])
             pass
         except OSError as error:
-            print(f'Error: {error}')
+            print(f'Setup file not found. Starting setup...')
             ClientPrint('Select your deposit box, where resources taken from trees'
                     + ' will be stored:')
             self.deposit_box = self.__get_obj_id()
@@ -161,8 +167,8 @@ class AutoLumber:
         self.lumberjacking.convert_logs()
         self.__check_backpack_items()
         self.__deposit_resources()
-        self.overweight = check_overweight()
+        self.overweight = is_overweight()
 
 if __name__ == "__main__":
-    main = AutoLumber()
-    main.start()
+    runner = AutoLumber()
+    runner.start()

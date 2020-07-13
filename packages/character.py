@@ -118,7 +118,7 @@ class MyChar(Char):
     @property
     def title(self) -> str:
         logging.info(f"Getting character title")
-        self._title = stealth.CharTitle()
+        self._title = stealth.GetCharTitle()
         return self._title
 
     @property

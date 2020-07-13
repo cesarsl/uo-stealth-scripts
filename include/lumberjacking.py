@@ -19,6 +19,7 @@ class Lumberjacking:
         self.current_axe = None
         self.current_tree = None
         self.secure_chest = None
+        self._backpack_logs = []
         self.__load_resources()
         self.__find_axe()
 
@@ -75,6 +76,10 @@ class Lumberjacking:
     def get_tree_name(self):
         tree_name = [x['name'] for x in self.trees if x['tile'] == str(self.current_tree['tile'])][0]
         return tree_name
+    
+    @property
+    def name(self, tile):
+        return [tree['name'] for tree in self.trees if tree['tile'] == tile].pop(0)
 
     def find_trees(self, radius=8):
         char_x = GetX(Self())
@@ -114,24 +119,45 @@ class Lumberjacking:
         else:
             return True
     
-    def convert_logs(self):
+    def harvest(self, tile, x, y, z):
+        CancelWaitTarget()
+        CancelTarget()
+        
+        timestamp_before = dt.datetime.now()
+        UseObject(self.current_axe)
+        while InJournalBetweenTimes('What do you want to use this item on?', timestamp_before, dt.datetime.now()) <= 0:
+            Wait(1)
+        
+        WaitTargetTile(tile, x, y, z)
+        Wait(self.LAG_FAILSAFE)
+
+        if WaitJournalLine(timestamp_before, self.NO_LOGS_MSG, 4000):
+            print('No more logs available on this tree.')
+            return False
+        return True
+
+    def can_convert_logs(self):
         board_type = int([x['type'] for x in self.resource_types if x['name'] == 'logs'][0],16)
         FindType(board_type, Backpack())
         logs_found = GetFindedList()
-        
         if len(logs_found) == 0:
+            self._backpack_logs = []
             return False
-
-        for log in logs_found:
-            time_before = dt.datetime.now()
-            UseObject(self.current_axe)
-            while InJournalBetweenTimes('What do you want to use this item on?', time_before, dt.datetime.now()) <= 0:
-                Wait(1)
-            
-            WaitTargetObject(log)
-            Wait(self.LAG_FAILSAFE)
-        
+        self._backpack_logs = logs_found
         return True
+
+    def convert_logs(self):
+        if self.can_convert_logs():
+            if len(self._backpack_logs) != 0:
+                for log in self._backpack_logs:
+                    time_before = dt.datetime.now()
+                    UseObject(self.current_axe)
+                    while InJournalBetweenTimes('What do you want to use this item on?', time_before, dt.datetime.now()) <= 0:
+                        Wait(1)
+                    
+                    WaitTargetObject(log)
+                    Wait(self.LAG_FAILSAFE)
+            return
         
 
 
