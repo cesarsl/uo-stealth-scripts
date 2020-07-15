@@ -3,8 +3,10 @@ import json
 import PySimpleGUI as psg
 
 from stealth import Self, GetX, GetY, CharName, ClientPrint, UseObject, Backpack, \
-                    FindTypesArrayEx, GetFindedList, MoveItem, Wait, newMoveXY
+                    FindTypesArrayEx, GetFindedList, MoveItem, Wait, newMoveXY, \
+                    FindTypeEx, FindFullQuantity
 
+from include.constants import TREES, WEAPONS, MATERIALS, LAG_THRESHOLD
 from include.helpers import get_object_id, is_overweight
 from include.lumberjacking import Lumberjacking
 from include.runebook import Runebook
@@ -83,7 +85,7 @@ class Runner:
         return
 
     def _can_store_items(self):
-        storage_types = [int(x['type'], 16) for x in self._lumberjacking.resource_types]
+        storage_types = [material for material in MATERIALS.get('lumberjacking')]
         FindTypesArrayEx(storage_types, [0xffff], [Backpack()], False)
         self._resources_found_list = GetFindedList()
 
@@ -104,6 +106,35 @@ class Runner:
         
         if self._can_store_items():
             self._deposit_items()
+
+    def _get_material_type(self, name):
+        return [uid for uid, props in MATERIALS.get('lumberjacking').items() if props.get('name') == name][0]
+    
+    def _get_material_colors(self, material_type):
+        colors = []
+        for material, props in MATERIALS.get('lumberjacking').items():
+            if material == material_type:
+                [colors.append(color) for color in props.get('colors')]
+        return colors
+    
+    def _get_color_name(self, material_type, color_id):
+        colors = []
+        for material, props in MATERIALS.get('lumberjacking').items():
+            if material == material_type:
+                for color, name  in props.get('colors').items():
+                    if color == color_id:
+                        return name
+
+    def _count_resources(self):
+        board_type = self._get_material_type('boards')
+        UseObject(self._deposit_box)
+        Wait(LAG_THRESHOLD)
+        print('Deposit Box Inventory')
+        print('---------------------')
+        for color in self._get_material_colors(board_type):
+            FindTypeEx(board_type, color, self._deposit_box, False)
+            print(f'{self._get_color_name(board_type, color)}: {FindFullQuantity()}')
+        return
 
     def start(self):
         self._running = True
@@ -127,10 +158,6 @@ class Runner:
                 self._trees_runebooks[self._current_book].travel(self._current_rune)
                 self._trees = Trees()
             
-            # Maybe?
-            # if not self._trees:
-            #     self._trees = Trees()
-            
             for tree in self._trees:
                 if tree is not None:
                     print(f'Going to {tree.get("name")} at {tree.get("x")}, {tree.get("y")}')
@@ -145,6 +172,7 @@ class Runner:
                             if is_overweight():
                                 print('No more logs to convert into boards. Going to deposit box.')
                                 self._store_resources()
+                                self._count_resources()
                                 print('Going back to the forest.')
                                 self._trees_runebooks[self._current_book].travel(self._current_rune)
                                 print(f'Going back to {tree.get("name")} at {tree.get("x")}, {tree.get("y")}')
@@ -163,10 +191,12 @@ class Runner:
                 if self._current_rune < 16:
                     self._current_rune += 1
                 else:
+                    if self._current_book < len(self._trees_runebooks):
+                        self._current_book += 1
+                    else:
+                        self._current_book = 0
                     self._last_rune = 0
                     self._current_rune = 1
-            else:
-                self._last_rune = self._current_rune
 
 if __name__ == '__main__':
     runner = Runner()

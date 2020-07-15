@@ -1,15 +1,11 @@
 import os
 
+from include.constants import TREES
 from include.helpers import find_tiles, load_resources
 
 from stealth import Self, GetX, GetY
 
-LUMBER_RESOURCES = load_resources(
-    os.path.realpath('./../scripts/assets/json/lumberjacking.json')
-)
-TREES_DATA = LUMBER_RESOURCES.get('trees')
-TREES_NAMES = {int(tree.get('tile')): tree.get('name') for tree in TREES_DATA}
-TREES_TILES = [int(tree.get('tile')) for tree in TREES_DATA]
+TREES_TILES = [tree for tree in TREES]
 
 class Trees:
     def __init__(self):
@@ -24,6 +20,9 @@ class Trees:
             radius
         )
         return tiles
+    
+    def _get_tree_name(self):
+        return TREES.get(self._current_tree[0]).get('name')
 
     def _current_x(self):
         return int(GetX(Self()))
@@ -41,7 +40,7 @@ class Trees:
         self._trees.pop(0)
         
         return {
-                'name': TREES_NAMES.get(self._current_tree[0]),
+                'name': self._get_tree_name(),
                 'tile': self._current_tree[0],
                 'x': self._current_tree[1],
                 'y': self._current_tree[2],
