@@ -30,7 +30,15 @@ class Runner:
         self._last_rune = None
         self._current_tree = None
         self._resources_found_list = []
-        self._is_at_home = None
+        self._session_data = {
+            'normal': 0, 
+            'ash': 0, 
+            'yew': 0, 
+            'heartwood': 0, 
+            'bloodwood': 0, 
+            'frostwood': 0,
+            'oak': 0
+        }
         self._setup()
     
     def _setup(self):
@@ -133,7 +141,11 @@ class Runner:
         print('---------------------')
         for color in self._get_material_colors(board_type):
             FindTypeEx(board_type, color, self._deposit_box, False)
-            print(f'{self._get_color_name(board_type, color)}: {FindFullQuantity()}')
+            color_name = self._get_color_name(board_type, color)
+            color_qty = FindFullQuantity()
+            self._session_data[color_name] = color_qty
+        for item, val in self._session_data.items():
+            print(f'{item.capitalize()}: {val:,}'.replace(',', '.'))
         return
 
     def start(self):
@@ -191,7 +203,7 @@ class Runner:
                 if self._current_rune < 16:
                     self._current_rune += 1
                 else:
-                    if self._current_book < len(self._trees_runebooks):
+                    if self._current_book < len(self._trees_runebooks) - 1:
                         self._current_book += 1
                     else:
                         self._current_book = 0
