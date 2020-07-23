@@ -18,11 +18,18 @@ class Item:
     def properties(self):
         return self._properties
     
+    def _is_integer(self, number):
+        try:
+            _res = int(number)
+            return True
+        except ValueError:
+            return False
+
     def _get_cliloc_name(self, cliloc_id):
         return CLILOCS.get(cliloc_id).get('text')
 
     def _string_parser(self, string):
-        if string.isdigit():
+        if self._is_integer(string):
             return int(string)
         if re.match(r"[0-9]+[\.\,]?[0-9]+s|[0-9]+s", string):
             return float(string.replace("s", "").replace(",", "."))
@@ -68,6 +75,6 @@ class Item:
                         }
         return parsed
 
-item = Item(int(0x412D4F6C))
+item = Item(get_object_id())
 
 print(item.properties)
