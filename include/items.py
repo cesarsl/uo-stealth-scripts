@@ -74,7 +74,3 @@ class Item:
                             'tot': int(cliloc_params[1])
                         }
         return parsed
-
-item = Item(get_object_id())
-
-print(item.properties)
